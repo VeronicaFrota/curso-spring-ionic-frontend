@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, MenuController } from 'ionic-angular';
 import { IonicPage } from 'ionic-angular/navigation/ionic-page';
 import { CredenciaisDTO } from '../../models/credenciais.dto';
+import { AuthService } from '../../services/auth.service';
 
 @IonicPage()
 @Component({
@@ -17,7 +18,8 @@ export class HomePage {
 
 	constructor(
 		public navCtrl: NavController,
-		public menu: MenuController
+		public menu: MenuController,
+		public auth: AuthService
 	) {}
 
 	ionViewWillEnter() {									// Desabilitar o menu
@@ -29,9 +31,17 @@ export class HomePage {
 	}
 
 	login() {
-		//this.navCtrl.push('CategoriasPage')               // Navegação sendo utilizada com o push empilha uma pagina em cima da outra
 		console.log(this.creds)
-		this.navCtrl.setRoot('CategoriasPage')              // Navegação sendo utilizada com o setRoot para não empilhar uma pagina em cima da outra
+		this.auth.authenticate(this.creds)
+			.subscribe(
+				(response) => {
+					console.log(response.headers.get("Authorization"))
+					this.navCtrl.setRoot('CategoriasPage')              // Navegação sendo utilizada com o setRoot para não empilhar uma pagina em cima da outra
+				},
+				(error) => {
+
+				}
+			)
 	}
 
 }
